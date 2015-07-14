@@ -1,0 +1,239 @@
+function xxxx = test1() 
+zxc=0;
+ok1=0;
+ok2=0;
+op1=0;
+op2=0;
+while zxc~=1
+url1=0;
+url2=0;
+sum=0;
+in=1;
+
+display('*********************MENU******************************************');
+display('        1.ENTER FIRST URL');
+display('        2.ENTER SECOND URL');
+display('        3.OPTIONS');
+display('        4.RESULT');
+display('        5.EXIT');
+prompt='ENTER YOUR CHOICE : ';
+cho=input(prompt);
+ 
+switch cho
+    case 1
+           ok1=1;
+           prompt = 'ENTER FIRST URL :';
+           url1=input(prompt,'s');
+         if isempty(url1)
+              url1='ffgfgsd';
+         end
+           display('DOWNLOADING.... PLEASE WAIT...');
+           [filestr,status]=urlwrite(url1,'img1.jpg');
+           if(status==0)
+           prompt='retry,download failed';
+           asd=input(prompt);
+           else
+            a=imread('img1.jpg');
+            figure, imshow(a);
+           end
+           
+    case 2 
+           ok2=1;
+           prompt = 'ENTER SECOND URL :';
+           url2=input(prompt,'s');
+            if isempty(url2)
+              url2='ffgfgsd';
+            end
+           display('DOWNLOADING.... PLEASE WAIT...');
+           [filestr,status]=urlwrite(url2,'img2.jpg');
+           if(status==0)
+           prompt='retry,download failed';
+           asd=input(prompt);
+           else
+           b=imread('img2.jpg');
+             figure, imshow(b);
+           end
+         
+           
+    case 3 
+           prompt = 'do you want image size to affect the overall result(y/n) : ';
+           op1=input(prompt,'s');
+           prompt = 'do you want image colour to affect the overall result(y/n) : ';
+           op2=input(prompt,'s');
+ 
+    case 4 
+          if(( ok1==1)&&(ok2==1))  
+           ok1=0;ok2=0;
+           [c,d,e]=size(a);
+           [f,g,h]=size(b);
+           i=c/d;
+           j=f/g;
+           A=a;
+           B=b;
+           z1=0;
+           z2=0;
+           z3=0;
+           z4=0;
+ 
+ 
+          if(c*d)<(f*g)
+            z1=(c*d)/(f*g);
+          else
+            z1=(f*g)/(c*d);
+          end
+ 
+ 
+ 
+ 
+          if c==f && d==g
+          imgMirror1 = flipdim(B,2);
+          x2=rgb2gray(imgMirror1);
+          y2=rgb2gray(A);
+          z21=corr2(y2,x2);
+          imgUpsideDown = flipdim(B,1);  %# Flips the rows, making an upside-down image
+          x2=rgb2gray(imgUpsideDown);
+          y2=rgb2gray(A);
+          z22=corr2(y2,x2);
+          if (z21>0.98)
+           z21=1;
+          end 
+           if (z22>.98)
+            z22=1   
+          end
+          end
+ 
+ 
+ 
+          % Get means of first image
+          meanRed1 = mean2(A(:,:,1));
+          meanGreen1 = mean2(A(:,:,2));
+          meanBlue1 = mean2(A(:,:,3));
+          % Get means of second image
+          meanRed2 = mean2(B(:,:,1));
+          meanGreen2 = mean2(B(:,:,2));
+          meanBlue2 = mean2(B(:,:,3));
+ 
+         if meanRed1<meanRed2
+           zr=meanRed1/meanRed2;
+         else
+         zr=meanRed2/meanRed1;
+         end
+ 
+        if meanGreen1<meanGreen2
+         zg=meanGreen1/meanGreen2;
+        else
+         zg=meanGreen2/meanGreen1;
+        end
+ 
+ 
+       if meanBlue1<meanBlue2
+       zb=meanBlue1/meanBlue2;
+       else
+       zb=meanBlue2/meanBlue1;  
+       end
+       z3=(zr+zg+zb)/3;
+ 
+ 
+ 
+      rotim1=B;
+      n=0;
+      while(n<3)    
+     rotim1 = imrotate(rotim1,90);
+     [i,o,p]=size(rotim1);
+     if c==i && d==o
+        x4=rgb2gray(A);
+        y4=rgb2gray(rotim1);
+        z41=corr2(x4,y4);
+        if z41>0.98
+            z4=1;
+        end
+    end       
+     n=n+1;
+      end
+ 
+ 
+ 
+      if i~=j
+        A = imresize(a,[400 300]);
+        B=imresize(b,[400 300]);
+      end
+     x0=rgb2gray(A);
+     y0=rgb2gray(B);
+     z0=corr2(y0,x0);
+       
+        if op1=='y' 
+        in=(in+1);
+            sum=sum+z1;
+        end
+        
+        if(op2=='y')
+        in=(in+1);
+            sum=sum+z3;
+        end
+        sum=(sum+z0);
+        display('SIZE COMPARISON RESULT :');
+        disp(z1*100);
+                
+        display('SECOND IMAGE FLIPPED VERTION OF FIRST :');
+        if(z21==1)
+        display('yes');
+        else
+        display('no');   
+        end
+                
+        display('SECOND IMAGE MIRRORED VERSION OF FIRST :');
+        if(z22==1)
+        display('yes');
+        else
+        display('no');   
+        end
+        
+         display('SECOND IMAGE ROTATED VERSION OF FIRST :');
+        if(z4>.98)
+        display('yes');
+        degree=((n-1)*90)
+        else
+        display('no');   
+        end
+        
+        display('COLOUR COMPARISON RESULT  :');
+        display('RED:');
+        disp(zr*100);
+        display('GREEN:');
+        disp(zg*100);
+        display('BLUE:');
+        disp(zb*100);
+         
+        display('OVERALL COMPARISON RESULT  :');
+        disp((sum*100)/in);
+        prompt='PRESS ENTER TO COMPARE NEXT IMAGES OR EXIT';
+        asdf=input(prompt);
+        close all;
+        op1=0;
+        op2=0;
+        else
+           prompt='sorry please enter the urls ';
+           asdf=input(prompt);
+      end
+        
+    
+    case 5 
+           zxc=1;
+        
+        
+        
+        
+        
+        
+        
+    otherwise
+        disp('input error');
+        
+end
+ 
+clc;
+end
+ 
+end
+
+
